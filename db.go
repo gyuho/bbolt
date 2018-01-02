@@ -257,6 +257,13 @@ func Open(path string, mode os.FileMode, options *Options) (*DB, error) {
 		return db, nil
 	}
 
+	// Flush freelist when transitioning from sync to no sync
+	// prevent stale free list from free-list-sync db,
+	// and scribble over an allocated page
+	if db.NoFreelistSync && db.hasSyncedFreelist() {
+		fmt.Println("db.NoFreelistSync && db.hasSyncedFreelist()!!!")
+	}
+
 	db.loadFreelist()
 
 	// Flush freelist when transitioning from no sync to sync so
